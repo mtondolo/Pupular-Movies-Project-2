@@ -6,8 +6,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.net.URL;
 
 import butterknife.BindView;
@@ -36,7 +40,16 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String[] doInBackground(String... strings) {
             URL moviesRequestUrl = NetworkUtils.buildUrl();
-            return new String[0];
+            try {
+                String jsonMoviesResponse = NetworkUtils
+                        .getResponseFromHttpUrl(moviesRequestUrl);
+                String[] simpleJsonMoviesData = JsonUtils
+                        .getSimpleNewsStringsFromJson(MainActivity.this, jsonMoviesResponse);
+                return simpleJsonMoviesData;
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
     }
 }
