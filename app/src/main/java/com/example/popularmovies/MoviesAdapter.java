@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -31,7 +30,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
         String movieForThisDataPosition = mMoviesData[position];
-        holder.mMoviewTextView.setText(movieForThisDataPosition);
+        holder.mMoviesTextView.setText(movieForThisDataPosition);
     }
 
     @Override
@@ -43,11 +42,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_movies_data)
-        TextView mMoviewTextView;
+        public final TextView mMoviesTextView;
 
         public MoviesAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
+            mMoviesTextView = itemView.findViewById(R.id.tv_movies_data);
         }
     }
 

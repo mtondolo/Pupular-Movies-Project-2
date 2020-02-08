@@ -1,6 +1,8 @@
 package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,14 +21,23 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    @BindView(R.id.tv_movies_data)
-    TextView mMovieDisplayTextView;
+    @BindView(R.id.recyclerview_movies)
+    RecyclerView mRecyclerView;
+
+    private MoviesAdapter mMoviesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        GridLayoutManager layoutManager
+                = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setHasFixedSize(true);
+        mMoviesAdapter = new MoviesAdapter();
+        mRecyclerView.setAdapter(mMoviesAdapter);
 
         loadMoviesData();
     }
@@ -55,10 +66,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String[] moviesData) {
             if (moviesData != null) {
-                // Iterate through the array and append the Strings to the TextView.
-                for (String moviesString : moviesData) {
-                    mMovieDisplayTextView.append((moviesString) + "\n\n\n");
-                }
+                mMoviesAdapter.setMoviesData(moviesData);
             }
         }
     }
