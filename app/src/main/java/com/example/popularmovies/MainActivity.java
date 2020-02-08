@@ -51,5 +51,15 @@ public class MainActivity extends AppCompatActivity {
                 return null;
             }
         }
+
+        @Override
+        protected void onPostExecute(String[] moviesData) {
+            if (moviesData != null) {
+                // Iterate through the array and append the Strings to the TextView.
+                for (String moviesString : moviesData) {
+                    mMovieDisplayTextView.append((moviesString) + "\n\n\n");
+                }
+            }
+        }
     }
 }
