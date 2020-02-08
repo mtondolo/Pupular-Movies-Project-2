@@ -28,11 +28,14 @@ public class JsonUtils {
         for (int i = 0; i < moviesJsonArray.length(); i++) {
             JSONObject movieJsonObject = moviesJsonArray.getJSONObject(i);
 
-            String title = movieJsonObject.optString("title");
-            String date = movieJsonObject.optString("release_date");
-            String votes = movieJsonObject.optString("vote_average");
+            String title = movieJsonObject.optString("original_title");
+            String moviePoster = movieJsonObject.optString("poster_path");
+            String releaseDate = movieJsonObject.optString("release_date");
+            String voteAverage = movieJsonObject.optString("vote_average");
+            String plotSynopsis = movieJsonObject.optString("overview");
 
-            parsedMovieData[i] = title + " - " + date + " - " + votes;
+            parsedMovieData[i] = title + " - " + moviePoster + " - " + releaseDate + " - "
+                    + voteAverage + " - " + plotSynopsis;
         }
         return parsedMovieData;
     }
