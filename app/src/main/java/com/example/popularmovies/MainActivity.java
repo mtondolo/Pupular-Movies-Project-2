@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -55,7 +56,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     public void onListItemClick(Movie clickedMovie) {
         Context context = this;
-        Toast.makeText(context, clickedMovie.getTitle(), Toast.LENGTH_SHORT).show();
+        Class detailActivity = DetailActivity.class;
+        Intent detailActivityIntent = new Intent(context, detailActivity);
+        startActivity(detailActivityIntent);
     }
 
     private class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
