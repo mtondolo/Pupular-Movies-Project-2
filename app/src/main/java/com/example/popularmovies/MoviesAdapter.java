@@ -4,15 +4,25 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import butterknife.BindView;
+import com.example.popularmovies.Utils.NetworkUtils;
+import com.example.popularmovies.model.Movie;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
+import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
-    private String[] mMoviesData;
+
+    private List<Movie> mMovies;
+
+    public MoviesAdapter(List<Movie> movies) {
+        mMovies = movies;
+    }
 
     @NonNull
     @Override
@@ -29,29 +39,35 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
-        String movieForThisDataPosition = mMoviesData[position];
-        holder.mMoviesTextView.setText(movieForThisDataPosition);
+
+        Movie movie = mMovies.get(position);
+        URL posterUrl = NetworkUtils.buildPosterUrl(movie.getMoviePoster());
+        Picasso.get()
+                .load(String.valueOf(posterUrl))
+                .placeholder(R.color.colorPrimary)
+                .error(R.color.colorPrimary)
+                .into(holder.mMoviesImageView);
     }
 
     @Override
     public int getItemCount() {
-        if (mMoviesData == null) {
+        if (mMovies == null) {
             return 0;
         }
-        return mMoviesData.length;
+        return mMovies.size();
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mMoviesTextView;
+        public final ImageView mMoviesImageView;
 
         public MoviesAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
-            mMoviesTextView = itemView.findViewById(R.id.tv_movies_data);
+            mMoviesImageView = itemView.findViewById(R.id.iv_movie_poster);
         }
     }
 
-    void setMoviesData(String[] moviesData) {
-        mMoviesData = moviesData;
+    void setMoviesData(List<Movie> moviesData) {
+        mMovies = moviesData;
         notifyDataSetChanged();
     }
 }

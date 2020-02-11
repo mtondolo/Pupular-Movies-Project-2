@@ -6,15 +6,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
+import com.example.popularmovies.model.Movie;
 
 import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +38,8 @@ public class MainActivity extends AppCompatActivity {
                 = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
-        mMoviesAdapter = new MoviesAdapter();
+
+        mMoviesAdapter = new MoviesAdapter(new ArrayList<Movie>());
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         loadMoviesData();
@@ -47,14 +50,14 @@ public class MainActivity extends AppCompatActivity {
         new FetchMoviesTask().execute();
     }
 
-    private class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
+    private class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         @Override
-        protected String[] doInBackground(String... strings) {
+        protected List<Movie> doInBackground(String... strings) {
             URL moviesRequestUrl = NetworkUtils.buildUrl();
             try {
                 String jsonMoviesResponse = NetworkUtils
                         .getResponseFromHttpUrl(moviesRequestUrl);
-                String[] simpleJsonMoviesData = JsonUtils
+                List<Movie> simpleJsonMoviesData = JsonUtils
                         .getSimpleNewsStringsFromJson(MainActivity.this, jsonMoviesResponse);
                 return simpleJsonMoviesData;
             } catch (IOException | JSONException e) {
@@ -64,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String[] moviesData) {
+        protected void onPostExecute(List<Movie> moviesData) {
             if (moviesData != null) {
                 mMoviesAdapter.setMoviesData(moviesData);
             }

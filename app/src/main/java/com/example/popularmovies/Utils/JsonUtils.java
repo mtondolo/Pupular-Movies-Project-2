@@ -3,14 +3,19 @@ package com.example.popularmovies.Utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.example.popularmovies.model.Movie;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class JsonUtils {
 
     // This method parses JSON from a web response and returns an array of Strings
-    public static String[] getSimpleNewsStringsFromJson(Context context, String moviesJsonStr)
+    public static List<Movie> getSimpleNewsStringsFromJson(Context context, String moviesJsonStr)
             throws JSONException {
 
         // If the JSON string is empty or null, then return early.
@@ -21,9 +26,7 @@ public class JsonUtils {
         JSONObject moviesJsonObject = new JSONObject(moviesJsonStr);
         JSONArray moviesJsonArray = moviesJsonObject.getJSONArray("results");
 
-        // String array to hold each movie item String
-        String[] parsedMovieData = null;
-        parsedMovieData = new String[moviesJsonArray.length()];
+        List<Movie> movies = new ArrayList<>();
 
         for (int i = 0; i < moviesJsonArray.length(); i++) {
             JSONObject movieJsonObject = moviesJsonArray.getJSONObject(i);
@@ -34,9 +37,10 @@ public class JsonUtils {
             String voteAverage = movieJsonObject.optString("vote_average");
             String plotSynopsis = movieJsonObject.optString("overview");
 
-            parsedMovieData[i] = title + " - " + moviePoster + " - " + releaseDate + " - "
-                    + voteAverage + " - " + plotSynopsis;
+            Movie movie = new Movie(title, moviePoster, releaseDate, voteAverage, plotSynopsis);
+
+            movies.add(movie);
         }
-        return parsedMovieData;
+        return movies;
     }
 }
