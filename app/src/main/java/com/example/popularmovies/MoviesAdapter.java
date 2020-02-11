@@ -13,7 +13,6 @@ import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
-import java.net.URL;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
@@ -45,11 +44,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
-
         Movie movie = mMovies.get(position);
-        URL posterUrl = NetworkUtils.buildPosterUrl(movie.getMoviePoster());
+        loadGridUIPoster(holder, movie);
+    }
+
+    public static void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
         Picasso.get()
-                .load(String.valueOf(posterUrl))
+                .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
                 .placeholder(R.color.colorPrimary)
                 .error(R.color.colorPrimary)
                 .into(holder.mMoviesImageView);

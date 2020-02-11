@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.example.popularmovies.Utils.JsonUtils;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         Context context = this;
         Class detailActivity = DetailActivity.class;
         Intent detailActivityIntent = new Intent(context, detailActivity);
+        detailActivityIntent.putExtra(Intent.EXTRA_TEXT, clickedMovie);
         startActivity(detailActivityIntent);
     }
 
