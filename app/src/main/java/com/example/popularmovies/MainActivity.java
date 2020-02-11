@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.popularmovies.Utils.JsonUtils;
 import com.example.popularmovies.Utils.NetworkUtils;
@@ -21,7 +23,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler {
 
     @BindView(R.id.recyclerview_movies)
     RecyclerView mRecyclerView;
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        mMoviesAdapter = new MoviesAdapter(new ArrayList<Movie>());
+        mMoviesAdapter = new MoviesAdapter(new ArrayList<Movie>(), this);
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         loadMoviesData();
@@ -48,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
     // This method will tell some background method to get the movies data in the background.
     private void loadMoviesData() {
         new FetchMoviesTask().execute();
+    }
+
+    @Override
+    public void onListItemClick(Movie clickedMovie) {
+        Context context = this;
+        Toast.makeText(context, clickedMovie.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
     private class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
