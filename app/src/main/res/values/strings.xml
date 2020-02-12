@@ -4,4 +4,5 @@
     <string name="detail_release_date_label">Release date:</string>
     <string name="detail_plot_synopsis_label">Plot Synopsis:</string>
     <string name="detail_ratings_label">Ratings:</string>
+    <string name="sort_order_message">Movies sorted by top rated</string>
 </resources>

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -62,14 +61,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int menuItemThatWasSelected = item.getItemId();
         if (menuItemThatWasSelected == R.id.action_sort) {
-            sortMovies();
+            JsonUtils.sortMoviesByTopRated();
+            mMoviesAdapter.notifyDataSetChanged();
+            Toast.makeText(this, R.string.sort_order_message, Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void sortMovies() {
-        Toast.makeText(this, "Sort movies", Toast.LENGTH_SHORT).show();
     }
 
     // This method will tell some background method to get the movies data in the background.

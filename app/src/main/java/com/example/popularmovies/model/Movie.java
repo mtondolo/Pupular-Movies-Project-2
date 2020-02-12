@@ -3,7 +3,7 @@ package com.example.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Movie implements Parcelable {
+public class Movie implements Parcelable, Comparable<Movie> {
     private String title;
     private String moviePoster;
     private String releaseDate;
@@ -95,4 +95,9 @@ public class Movie implements Parcelable {
                     return new Movie[size];
                 }
             };
+
+    @Override
+    public int compareTo(Movie o) {
+        return this.getVoteAverage().compareTo(o.getVoteAverage());
+    }
 }
