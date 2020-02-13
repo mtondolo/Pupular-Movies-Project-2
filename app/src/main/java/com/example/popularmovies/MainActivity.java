@@ -117,9 +117,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             try {
                 String jsonMoviesResponse = NetworkUtils
                         .getResponseFromHttpUrl(moviesRequestUrl);
-                List<Movie> simpleJsonMoviesData = JsonUtils
-                        .getSimpleNewsStringsFromJson(MainActivity.this, jsonMoviesResponse);
-                return simpleJsonMoviesData;
+                return JsonUtils
+                        .getSimpleNewsStringsFromJson(jsonMoviesResponse);
             } catch (IOException | JSONException e) {
                 e.printStackTrace();
                 return null;

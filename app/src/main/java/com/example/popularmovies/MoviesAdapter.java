@@ -37,9 +37,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutIdForListItem, parent, false);
-        MoviesAdapterViewHolder viewHolder = new MoviesAdapterViewHolder(view);
 
-        return viewHolder;
+        return new MoviesAdapterViewHolder(view);
     }
 
     @Override
@@ -48,7 +47,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         loadGridUIPoster(holder, movie);
     }
 
-    public static void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
+    private static void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
         Picasso.get()
                 .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
                 .placeholder(R.color.colorPrimary)
@@ -66,9 +65,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
-        public final ImageView mMoviesImageView;
+        final ImageView mMoviesImageView;
 
-        public MoviesAdapterViewHolder(@NonNull View itemView) {
+        MoviesAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mMoviesImageView = itemView.findViewById(R.id.iv_movie_poster);
             itemView.setOnClickListener(this);

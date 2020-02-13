@@ -16,10 +16,10 @@ public class NetworkUtils {
     private static final String MOVIES_DB_POSTER_URL
             = "https://image.tmdb.org/t/p/";
 
-    final static String QUERY_PARAM = "api_key";
+    private final static String QUERY_PARAM = "api_key";
 
-    final static String api_key = "024d46a9e528641235e789659cc35089";
-    final static String logo_size = "w185";
+    private final static String api_key = "024d46a9e528641235e789659cc35089";
+    private final static String logo_size = "w185";
 
     // Builds the URL used to talk to the the movie db server.
     public static URL buildUrl() {

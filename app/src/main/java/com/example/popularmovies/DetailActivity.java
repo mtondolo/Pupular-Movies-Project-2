@@ -11,8 +11,6 @@ import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
 
-import java.net.URL;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -36,12 +34,10 @@ public class DetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         mMovie = intent.getParcelableExtra(Intent.EXTRA_TEXT);
-        if (intent != null) {
-            if (intent.hasExtra(Intent.EXTRA_TEXT)) {
-                setTitle(mMovie.getTitle());
-                loadDetailUIPoster();
-                populateUI();
-            }
+        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
+            setTitle(mMovie.getTitle());
+            loadDetailUIPoster();
+            populateUI();
         }
     }
 

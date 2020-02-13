@@ -1,8 +1,6 @@
 package com.example.popularmovies.Utils;
 
-import android.content.Context;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.example.popularmovies.model.Movie;
 
@@ -19,7 +17,7 @@ public class JsonUtils {
     private static List<Movie> movieList;
 
     // This method parses JSON from a web response and returns an array of Strings
-    public static List<Movie> getSimpleNewsStringsFromJson(Context context, String moviesJsonStr)
+    public static List<Movie> getSimpleNewsStringsFromJson(String moviesJsonStr)
             throws JSONException {
 
         // If the JSON string is empty or null, then return early.

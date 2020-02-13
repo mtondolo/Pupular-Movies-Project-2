@@ -4,14 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable, Comparable<Movie> {
-    private String title;
-    private String moviePoster;
-    private String releaseDate;
-    private String voteAverage;
-    private String plotSynopsis;
-
-    public Movie() {
-    }
+    private final String title;
+    private final String moviePoster;
+    private final String releaseDate;
+    private final String voteAverage;
+    private final String plotSynopsis;
 
     public Movie(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis) {
         this.title = title;
@@ -21,7 +18,7 @@ public class Movie implements Parcelable, Comparable<Movie> {
         this.plotSynopsis = plotSynopsis;
     }
 
-    public Movie(Parcel parcel) {
+    private Movie(Parcel parcel) {
         title = parcel.readString();
         moviePoster = parcel.readString();
         releaseDate = parcel.readString();
@@ -33,40 +30,20 @@ public class Movie implements Parcelable, Comparable<Movie> {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getMoviePoster() {
         return moviePoster;
-    }
-
-    public void setMoviePoster(String moviePoster) {
-        this.moviePoster = moviePoster;
     }
 
     public String getReleaseDate() {
         return releaseDate;
     }
 
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
     public String getVoteAverage() {
         return voteAverage;
     }
 
-    public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
     public String getPlotSynopsis() {
         return plotSynopsis;
-    }
-
-    public void setPlotSynopsis(String plotSynopsis) {
-        this.plotSynopsis = plotSynopsis;
     }
 
     @Override
