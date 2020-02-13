@@ -11,6 +11,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.popularmovies.Utils.JsonUtils;
@@ -32,6 +35,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @BindView(R.id.recyclerview_movies)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.tv_error_message_display)
+    TextView mErrorMessageTextView;
+
+    @BindView(R.id.pb_loading_indicator)
+    ProgressBar mLoadingIndicator;
+
     private MoviesAdapter mMoviesAdapter;
 
     @Override
@@ -49,6 +58,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         loadMoviesData();
+    }
+
+    // Method called showMoviesDataView to show the data and hide the error
+    private void showMoviesDataView() {
+        mErrorMessageTextView.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    // Method called showErrorMessage to show the error and hide the data
+    private void showErrorMessage() {
+        mRecyclerView.setVisibility(View.INVISIBLE);
+        mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -85,6 +106,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mLoadingIndicator.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected List<Movie> doInBackground(String... strings) {
             URL moviesRequestUrl = NetworkUtils.buildUrl();
             try {
@@ -101,8 +128,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
         @Override
         protected void onPostExecute(List<Movie> moviesData) {
+            mLoadingIndicator.setVisibility(View.INVISIBLE);
             if (moviesData != null) {
+                showMoviesDataView();
                 mMoviesAdapter.setMoviesData(moviesData);
+            } else {
+                showErrorMessage();
             }
         }
     }
