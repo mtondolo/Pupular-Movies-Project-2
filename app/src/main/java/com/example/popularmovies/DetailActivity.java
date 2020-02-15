@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
 import com.squareup.picasso.Picasso;
@@ -42,9 +45,9 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void loadDetailUIPoster() {
-        Picasso.get()
+        Glide.with(getApplicationContext())
                 .load(String.valueOf(NetworkUtils.buildPosterUrl(mMovie.getMoviePoster())))
-                .placeholder(R.color.colorPrimary)
+                .centerCrop()
                 .placeholder(R.color.colorPrimary)
                 .into(mPosterImageView);
         setTitle(mMovie.getTitle());

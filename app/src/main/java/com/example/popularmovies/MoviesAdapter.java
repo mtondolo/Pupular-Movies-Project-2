@@ -9,11 +9,12 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
@@ -47,11 +48,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         loadGridUIPoster(holder, movie);
     }
 
-    private static void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
-        Picasso.get()
+    private void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
+        Glide.with(holder.itemView.getContext())
                 .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
                 .placeholder(R.color.colorPrimary)
-                .error(R.color.colorPrimary)
+                .centerCrop()
                 .into(holder.mMoviesImageView);
     }
 
