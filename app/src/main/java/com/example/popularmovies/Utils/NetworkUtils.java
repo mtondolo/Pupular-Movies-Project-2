@@ -1,6 +1,9 @@
 package com.example.popularmovies.Utils;
 
+import android.app.Application;
 import android.net.Uri;
+
+import com.example.popularmovies.R;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,13 +21,23 @@ public class NetworkUtils {
 
     private final static String QUERY_PARAM = "api_key";
 
-    private final static String api_key = "024d46a9e528641235e789659cc35089";
+    private final static ThreadLocal<String> api_key = new ThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            try {
+                return getApplicationUsingReflection().getString(R.string.THE_MOVIE_DB_API_TOKEN);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return String.valueOf(api_key);
+        }
+    };
     private final static String logo_size = "w185";
 
     // Builds the URL used to talk to the the movie db server.
     public static URL buildUrl() {
         Uri buildUri = Uri.parse(MOVIES_DB_BASE_URL).buildUpon()
-                .appendQueryParameter(QUERY_PARAM, api_key)
+                .appendQueryParameter(QUERY_PARAM, api_key.get())
                 .build();
         URL url = null;
         try {
@@ -69,5 +82,10 @@ public class NetworkUtils {
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public static Application getApplicationUsingReflection() throws Exception {
+        return (Application) Class.forName("android.app.AppGlobals")
+                .getMethod("getInitialApplication").invoke(null, (Object[]) null);
     }
 }
