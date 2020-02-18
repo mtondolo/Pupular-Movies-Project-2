@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,21 +16,28 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.popularmovies.Utils.JsonUtils;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MovieAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity
+        implements MoviesAdapter.MovieAdapterOnClickHandler {
 
     @BindView(R.id.recyclerview_movies)
     RecyclerView mRecyclerView;
@@ -43,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private MoviesAdapter mMoviesAdapter;
 
+    private static List<Movie> movieList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,10 +63,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        mMoviesAdapter = new MoviesAdapter(new ArrayList<Movie>(), this);
+        movieList = new ArrayList<>();
+        mMoviesAdapter = new MoviesAdapter(movieList, this);
         mRecyclerView.setAdapter(mMoviesAdapter);
 
-        loadMoviesData();
+        getMoviesData();
     }
 
     // Method called showMoviesDataView to show the data and hide the error
@@ -82,17 +92,12 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int menuItemThatWasSelected = item.getItemId();
         if (menuItemThatWasSelected == R.id.action_sort) {
-            JsonUtils.sortMoviesByTopRated();
+            sortMoviesByTopRated();
             mMoviesAdapter.notifyDataSetChanged();
             Toast.makeText(this, R.string.sort_order_message, Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    // This method will tell some background method to get the movies data in the background.
-    private void loadMoviesData() {
-        new FetchMoviesTask().execute();
     }
 
     @Override
@@ -104,36 +109,56 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(detailActivityIntent);
     }
 
-    private class FetchMoviesTask extends AsyncTask<String, Void, List<Movie>> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mLoadingIndicator.setVisibility(View.VISIBLE);
-        }
+    public void getMoviesData() {
 
-        @Override
-        protected List<Movie> doInBackground(String... strings) {
-            URL moviesRequestUrl = NetworkUtils.buildUrl();
-            try {
-                String jsonMoviesResponse = NetworkUtils
-                        .getResponseFromHttpUrl(moviesRequestUrl);
-                return JsonUtils
-                        .getSimpleNewsStringsFromJson(jsonMoviesResponse);
-            } catch (IOException | JSONException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
+        mLoadingIndicator.setVisibility(View.VISIBLE);
 
-        @Override
-        protected void onPostExecute(List<Movie> moviesData) {
-            mLoadingIndicator.setVisibility(View.INVISIBLE);
-            if (moviesData != null) {
-                showMoviesDataView();
-                mMoviesAdapter.setMoviesData(moviesData);
-            } else {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest jsonObjectRequest
+                = new JsonObjectRequest(Request.Method.GET, NetworkUtils.buildUrl().toString(), null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray responseJSONArray = response.getJSONArray("results");
+
+                            for (int i = 0; i < responseJSONArray.length(); i++) {
+
+                                JSONObject jsonObject = responseJSONArray.getJSONObject(i);
+
+                                Movie movie = new Movie();
+
+                                movie.setTitle(jsonObject.getString("original_title"));
+                                movie.setMoviePoster(jsonObject.getString("poster_path"));
+                                movie.setReleaseDate(jsonObject.getString("release_date"));
+                                movie.setVoteAverage(jsonObject.getString("vote_average"));
+                                movie.setPlotSynopsis(jsonObject.getString("overview"));
+
+                                movieList.add(movie);
+
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            mLoadingIndicator.setVisibility(View.INVISIBLE);
+                        }
+                        mMoviesAdapter.notifyDataSetChanged();
+                        mLoadingIndicator.setVisibility(View.INVISIBLE);
+                        showMoviesDataView();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+                mLoadingIndicator.setVisibility(View.INVISIBLE);
                 showErrorMessage();
             }
-        }
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public static void sortMoviesByTopRated() {
+        Collections.sort(movieList, Collections.<Movie>reverseOrder());
     }
 }
+

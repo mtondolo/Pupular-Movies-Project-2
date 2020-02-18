@@ -4,11 +4,35 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable, Comparable<Movie> {
-    private final String title;
-    private final String moviePoster;
-    private final String releaseDate;
-    private final String voteAverage;
-    private final String plotSynopsis;
+    private String title;
+    private String moviePoster;
+    private String releaseDate;
+    private String voteAverage;
+
+    public Movie() {
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setMoviePoster(String moviePoster) {
+        this.moviePoster = moviePoster;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setVoteAverage(String voteAverage) {
+        this.voteAverage = voteAverage;
+    }
+
+    public void setPlotSynopsis(String plotSynopsis) {
+        this.plotSynopsis = plotSynopsis;
+    }
+
+    private String plotSynopsis;
 
     public Movie(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis) {
         this.title = title;
