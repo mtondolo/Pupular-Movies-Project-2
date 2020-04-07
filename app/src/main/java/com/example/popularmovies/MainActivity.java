@@ -39,6 +39,8 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
         implements MoviesAdapter.MovieAdapterOnClickHandler {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     @BindView(R.id.recyclerview_movies)
     RecyclerView mRecyclerView;
 
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         getMoviesData();
+
     }
 
     // Method called showMoviesDataView to show the data and hide the error
