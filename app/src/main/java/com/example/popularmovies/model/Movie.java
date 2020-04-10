@@ -4,12 +4,28 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable, Comparable<Movie> {
+    private String movieId;
     private String title;
     private String moviePoster;
     private String releaseDate;
     private String voteAverage;
+    private String plotSynopsis;
 
     public Movie() {
+    }
+
+    public Movie(String movieId, String title, String moviePoster, String releaseDate, String voteAverage,
+                 String plotSynopsis) {
+        this.movieId = movieId;
+        this.title = title;
+        this.moviePoster = moviePoster;
+        this.releaseDate = releaseDate;
+        this.voteAverage = voteAverage;
+        this.plotSynopsis = plotSynopsis;
+    }
+
+    public void setMovieId(String movieId) {
+        this.movieId = movieId;
     }
 
     public void setTitle(String title) {
@@ -32,22 +48,8 @@ public class Movie implements Parcelable, Comparable<Movie> {
         this.plotSynopsis = plotSynopsis;
     }
 
-    private String plotSynopsis;
-
-    public Movie(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis) {
-        this.title = title;
-        this.moviePoster = moviePoster;
-        this.releaseDate = releaseDate;
-        this.voteAverage = voteAverage;
-        this.plotSynopsis = plotSynopsis;
-    }
-
-    private Movie(Parcel parcel) {
-        title = parcel.readString();
-        moviePoster = parcel.readString();
-        releaseDate = parcel.readString();
-        voteAverage = parcel.readString();
-        plotSynopsis = parcel.readString();
+    public String getMovieId() {
+        return movieId;
     }
 
     public String getTitle() {
@@ -70,6 +72,15 @@ public class Movie implements Parcelable, Comparable<Movie> {
         return plotSynopsis;
     }
 
+    private Movie(Parcel parcel) {
+        movieId = parcel.readString();
+        title = parcel.readString();
+        moviePoster = parcel.readString();
+        releaseDate = parcel.readString();
+        voteAverage = parcel.readString();
+        plotSynopsis = parcel.readString();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -77,6 +88,7 @@ public class Movie implements Parcelable, Comparable<Movie> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(movieId);
         dest.writeString(title);
         dest.writeString(moviePoster);
         dest.writeString(releaseDate);

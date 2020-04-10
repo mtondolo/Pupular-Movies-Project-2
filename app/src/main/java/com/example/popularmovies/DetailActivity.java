@@ -2,17 +2,33 @@ package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ActivityNotFoundException;
+
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
-import com.squareup.picasso.Picasso;
+import com.example.popularmovies.model.Trailer;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,13 +43,19 @@ public class DetailActivity extends AppCompatActivity {
     TextView mPlotSynopsisTextView;
     @BindView(R.id.image_iv)
     ImageView mPosterImageView;
+    @BindView(R.id.trailer_iv)
+    ImageView mTrailerImageView;
     private Movie mMovie;
+    private static List<Trailer> mTrailerList;
+    private Trailer mTrailer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+
+        mTrailerList = new ArrayList<>();
 
         Intent intent = getIntent();
         mMovie = intent.getParcelableExtra(Intent.EXTRA_TEXT);
@@ -42,6 +64,13 @@ public class DetailActivity extends AppCompatActivity {
             loadDetailUIPoster();
             populateUI();
         }
+
+        mTrailerImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getTrailer();
+            }
+        });
     }
 
     private void loadDetailUIPoster() {
@@ -61,4 +90,47 @@ public class DetailActivity extends AppCompatActivity {
         String plotSynopsis = mMovie.getPlotSynopsis();
         mPlotSynopsisTextView.setText(plotSynopsis);
     }
+
+    public void getTrailer() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest
+                = new JsonObjectRequest(Request.Method.GET,
+                NetworkUtils.buildTrailerUrl(mMovie.getMovieId()).toString(), null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray responseJSONArray = response.getJSONArray("results");
+                            for (int i = 0; i == 0; i++) {
+                                JSONObject jsonObject = responseJSONArray.getJSONObject(0);
+                                mTrailer = new Trailer();
+                                mTrailer.setKey(jsonObject.getString("key"));
+                                mTrailerList.add(mTrailer);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        watchYoutubeVideo();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    public void watchYoutubeVideo() {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + mTrailer.getKey()));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + mTrailer.getKey()));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
+        }
+    }
+
 }

@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity
 
                                 Movie movie = new Movie();
 
+                                movie.setMovieId(jsonObject.getString("id"));
                                 movie.setTitle(jsonObject.getString("original_title"));
                                 movie.setMoviePoster(jsonObject.getString("poster_path"));
                                 movie.setReleaseDate(jsonObject.getString("release_date"));
