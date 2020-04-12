@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -85,51 +86,6 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-
-    }
-
-    private void getReviews() {
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest
-                = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildReviewUrl(mMovie.getMovieId()).toString(), null,
-                new Response.Listener<JSONObject>() {
-
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            JSONArray responseJSONArray = response.getJSONArray("results");
-                            for (int i = 0; i == 0; i++) {
-                                JSONObject jsonObject = responseJSONArray.getJSONObject(0);
-                                mReview = new Review();
-                                mReview.setAuthor(jsonObject.getString("author"));
-                                mReview.setContent(jsonObject.getString("content"));
-                                mReview.setId(jsonObject.getString("id"));
-                                mReview.setUrl(jsonObject.getString("url"));
-                                mReviewList.add(mReview);
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        searchWeb(mReview.getUrl());
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("Volley", error.toString());
-            }
-        });
-        requestQueue.add(jsonObjectRequest);
-
-    }
-
-    private void loadDetailUIPoster() {
-        Glide.with(getApplicationContext())
-                .load(String.valueOf(NetworkUtils.buildPosterUrl(mMovie.getMoviePoster())))
-                .centerCrop()
-                .placeholder(R.color.colorPrimary)
-                .into(mPosterImageView);
-        setTitle(mMovie.getTitle());
     }
 
     private void populateUI() {
@@ -139,6 +95,15 @@ public class DetailActivity extends AppCompatActivity {
         mReleaseTextView.setText(releaseDate);
         String plotSynopsis = mMovie.getPlotSynopsis();
         mPlotSynopsisTextView.setText(plotSynopsis);
+    }
+
+    private void loadDetailUIPoster() {
+        Glide.with(getApplicationContext())
+                .load(String.valueOf(NetworkUtils.buildPosterUrl(mMovie.getMoviePoster())))
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mPosterImageView);
+        setTitle(mMovie.getTitle());
     }
 
     public void getTrailer() {
@@ -172,6 +137,38 @@ public class DetailActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
+    private void getReviews() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest
+                = new JsonObjectRequest(Request.Method.GET,
+                NetworkUtils.buildReviewUrl(mMovie.getMovieId()).toString(), null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray responseJSONArray = response.getJSONArray("results");
+                            for (int i = 0; i == 0; i++) {
+                                JSONObject jsonObject = responseJSONArray.getJSONObject(0);
+                                mReview = new Review();
+                                mReview.setUrl(jsonObject.getString("url"));
+                                mReviewList.add(mReview);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        openWebPage(mReview.getUrl());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+
+    }
+
     public void watchYoutubeVideo() {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + mTrailer.getKey()));
         Intent webIntent = new Intent(Intent.ACTION_VIEW,
@@ -183,11 +180,13 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    public void searchWeb(String query) {
-        Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
-        intent.putExtra(SearchManager.QUERY, query);
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
+    public void openWebPage(String url) {
+        Context context = this;
+
+        // Launch the ReviewActivity using an explicit Intent
+        Class destinationClass = ReviewActivity.class;
+        Intent intentToStartReviewActivity = new Intent(context, destinationClass);
+        intentToStartReviewActivity.putExtra(Intent.EXTRA_TEXT, url);
+        startActivity(intentToStartReviewActivity);
     }
 }

@@ -12,9 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".ReviewActivity"
+            android:label="Reviews"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity
             android:name=".DetailActivity"
             android:parentActivityName=".MainActivity">
-
         </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
