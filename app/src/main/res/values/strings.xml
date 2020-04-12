@@ -7,6 +7,6 @@
     <string name="sort_order_message">Movies sorted by top rated</string>
     <string name="error_message">Failed to get results, please try again later</string>
     <string name="menu_title_sort">Sort</string>
-    <string name="favorite_display">Favorite</string>
-    <string name="trailer_display">Trailer</string>
+    <string name="favorite_display">Mark as Favorite</string>
+    <string name="trailer_display">Play Trailer</string>
 </resources>

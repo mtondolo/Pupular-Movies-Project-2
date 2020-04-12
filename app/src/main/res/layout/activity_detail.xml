@@ -91,7 +91,7 @@
         android:id="@+id/trailer_iv"
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:layout_marginStart="64dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
         android:tint="@color/colorPrimary"
@@ -101,15 +101,15 @@
 
     <TextView
         android:id="@+id/trailer_tv"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="43dp"
+        android:layout_marginTop="36dp"
         android:text="@string/trailer_display"
         android:textAlignment="textStart"
         android:textSize="18sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/plot_synopsis_tv"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/trailer_iv"
         app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_tv"
         tools:text="Trailer" />
@@ -120,9 +120,27 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="34dp"
         android:layout_marginEnd="32dp"
+        android:padding="8dp"
         android:background="@color/colorPrimary"
         android:text="@string/favorite_display"
+        android:textColor="#ffffff"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_iv"
         tools:text="Favorite" />
+
+    <TextView
+        android:id="@+id/reviews_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:text="Check Reviews"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#ffffff"
+        android:padding="8dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/trailer_tv"
+        app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_tv"
+        tools:text="Reviews" />
 </androidx.constraintlayout.widget.ConstraintLayout>
