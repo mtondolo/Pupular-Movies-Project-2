@@ -143,4 +143,5 @@
         app:layout_constraintStart_toEndOf="@+id/trailer_tv"
         app:layout_constraintTop_toBottomOf="@+id/plot_synopsis_tv"
         tools:text="Reviews" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

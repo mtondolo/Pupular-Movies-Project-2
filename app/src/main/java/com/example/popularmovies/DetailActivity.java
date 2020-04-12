@@ -2,6 +2,7 @@ package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 
 import android.content.Intent;
@@ -21,6 +22,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.model.Review;
 import com.example.popularmovies.model.Trailer;
 
 import org.json.JSONArray;
@@ -45,9 +47,13 @@ public class DetailActivity extends AppCompatActivity {
     ImageView mPosterImageView;
     @BindView(R.id.trailer_iv)
     ImageView mTrailerImageView;
+    @BindView(R.id.reviews_tv)
+    TextView mReviewsTextView;
     private Movie mMovie;
-    private static List<Trailer> mTrailerList;
     private Trailer mTrailer;
+    private static List<Trailer> mTrailerList;
+    private static List<Review> mReviewList;
+    private Review mReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,7 @@ public class DetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         mTrailerList = new ArrayList<>();
+        mReviewList = new ArrayList<>();
 
         Intent intent = getIntent();
         mMovie = intent.getParcelableExtra(Intent.EXTRA_TEXT);
@@ -71,6 +78,49 @@ public class DetailActivity extends AppCompatActivity {
                 getTrailer();
             }
         });
+        mReviewsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getReviews();
+            }
+        });
+
+
+    }
+
+    private void getReviews() {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        JsonObjectRequest jsonObjectRequest
+                = new JsonObjectRequest(Request.Method.GET,
+                NetworkUtils.buildReviewUrl(mMovie.getMovieId()).toString(), null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray responseJSONArray = response.getJSONArray("results");
+                            for (int i = 0; i == 0; i++) {
+                                JSONObject jsonObject = responseJSONArray.getJSONObject(0);
+                                mReview = new Review();
+                                mReview.setAuthor(jsonObject.getString("author"));
+                                mReview.setContent(jsonObject.getString("content"));
+                                mReview.setId(jsonObject.getString("id"));
+                                mReview.setUrl(jsonObject.getString("url"));
+                                mReviewList.add(mReview);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        searchWeb(mReview.getUrl());
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("Volley", error.toString());
+            }
+        });
+        requestQueue.add(jsonObjectRequest);
+
     }
 
     private void loadDetailUIPoster() {
@@ -133,4 +183,11 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
+    public void searchWeb(String query) {
+        Intent intent = new Intent(Intent.ACTION_WEB_SEARCH);
+        intent.putExtra(SearchManager.QUERY, query);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
 }

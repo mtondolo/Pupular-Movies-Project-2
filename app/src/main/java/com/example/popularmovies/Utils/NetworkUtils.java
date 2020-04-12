@@ -32,6 +32,7 @@ public class NetworkUtils {
     };
     private final static String logo_size = "w185";
     private final static String video_path = "videos";
+    private final static String review_path = "reviews";
 
     // Builds the URL used to talk to the the movie db server.
     public static URL buildUrl() {
@@ -73,6 +74,22 @@ public class NetworkUtils {
         URL url = null;
         try {
             url = new URL(buildTrailerUrl.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    public static URL buildReviewUrl(String movie_id) {
+        Uri buildReviewUrl = Uri.parse(MOVIES_DB_TRAILER_URL)
+                .buildUpon()
+                .appendEncodedPath(movie_id)
+                .appendEncodedPath(review_path)
+                .appendQueryParameter(QUERY_PARAM, api_key.get())
+                .build();
+        URL url = null;
+        try {
+            url = new URL(buildReviewUrl.toString());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
