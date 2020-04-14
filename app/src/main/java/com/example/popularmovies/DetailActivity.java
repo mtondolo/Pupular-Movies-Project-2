@@ -2,7 +2,6 @@ package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.SearchManager;
 import android.content.ActivityNotFoundException;
 
 import android.content.Context;
@@ -23,6 +22,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.model.MovieEntry;
 import com.example.popularmovies.model.Review;
 import com.example.popularmovies.model.Trailer;
 
@@ -50,17 +50,25 @@ public class DetailActivity extends AppCompatActivity {
     ImageView mTrailerImageView;
     @BindView(R.id.reviews_tv)
     TextView mReviewsTextView;
+    @BindView(R.id.favorite_btn)
+    TextView mFavoriteButton;
     private Movie mMovie;
     private Trailer mTrailer;
     private static List<Trailer> mTrailerList;
     private static List<Review> mReviewList;
     private Review mReview;
 
+    // Member variable for the Database
+    private AppDatabase mDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
+
+        // Initialize member variable for the data base
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         mTrailerList = new ArrayList<>();
         mReviewList = new ArrayList<>();
@@ -85,7 +93,25 @@ public class DetailActivity extends AppCompatActivity {
                 getReviews();
             }
         });
+        mFavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                favoriteAMovie();
+            }
+        });
 
+    }
+
+    private void favoriteAMovie() {
+
+        // Get data to save
+        String apiId = mMovie.getMovieId();
+        String title = mMovie.getTitle();
+
+        MovieEntry movieEntry = new MovieEntry(apiId, title);
+        // Save data with room
+        mDb.movieDao().insertBook(movieEntry);
+        finish();
     }
 
     private void populateUI() {
