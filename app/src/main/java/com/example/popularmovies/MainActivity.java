@@ -20,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.popularmovies.Utils.AppExecutors;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.AppDatabase;
 import com.example.popularmovies.model.Movie;
@@ -83,7 +84,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        mMoviesAdapter.setMovies(mDb.movieDao().loadAllMovies());
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<MovieEntry> movies = mDb.movieDao().loadAllMovies();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mMoviesAdapter.setMovies(movies);
+                    }
+                });
+            }
+        });
     }
 
     // Method called showMoviesDataView to show the data and hide the error
@@ -126,11 +138,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getMoviesData() {
-
         mLoadingIndicator.setVisibility(View.VISIBLE);
-
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET, NetworkUtils.buildUrl().toString(), null,
                 new Response.Listener<JSONObject>() {
@@ -143,25 +152,6 @@ public class MainActivity extends AppCompatActivity
 
                                 JSONObject jsonObject = responseJSONArray.getJSONObject(i);
 
-                                /*Movie movie = new Movie();
-
-                                movie.setId(jsonObject.getInt("id"));
-                                movie.setTitle(jsonObject.getString("original_title"));
-                                movie.setMoviePoster(jsonObject.getString("poster_path"));
-                                movie.setReleaseDate(jsonObject.getString("release_date"));
-                                movie.setVoteAverage(jsonObject.getString("vote_average"));
-                                movie.setPlotSynopsis(jsonObject.getString("overview"));
-
-                                movieList.add(movie);
-
-                                //int id = mMovie.getId();
-                                //String title = mMovie.getTitle();
-
-                                //MovieEntry movieEntry = new MovieEntry(id, title);
-                                // Save data with room
-                                //mDb.movieDao().insertBook(movieEntry);
-                                //finish();*/
-
                                 int id = jsonObject.getInt("id");
                                 String title = jsonObject.getString("original_title");
                                 String moviePoster = jsonObject.getString("poster_path");
@@ -169,11 +159,15 @@ public class MainActivity extends AppCompatActivity
                                 String voteAverage = jsonObject.getString("vote_average");
                                 String plotSynopsis = jsonObject.getString("overview");
 
-                                MovieEntry movieEntry = new MovieEntry(id, title, moviePoster,
+                                final MovieEntry movieEntry = new MovieEntry(id, title, moviePoster,
                                         release, voteAverage, plotSynopsis);
 
-                                mDb.movieDao().insertBook(movieEntry);
-
+                                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mDb.movieDao().insertBook(movieEntry);
+                                    }
+                                });
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
