@@ -104,14 +104,14 @@ public class DetailActivity extends AppCompatActivity {
 
     private void favoriteAMovie() {
 
-        // Get data to save
+       /* // Get data to save
         int id = mMovie.getId();
         String title = mMovie.getTitle();
 
         MovieEntry movieEntry = new MovieEntry(id, title);
         // Save data with room
         mDb.movieDao().insertBook(movieEntry);
-        finish();
+        finish();*/
     }
 
     private void populateUI() {

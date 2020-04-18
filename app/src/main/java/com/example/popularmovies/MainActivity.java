@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.model.MovieEntry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,11 +55,17 @@ public class MainActivity extends AppCompatActivity
 
     private static List<Movie> movieList;
 
+    // Member variable for the Database
+    private AppDatabase mDb;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        // Initialize member variable for the data base
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         GridLayoutManager layoutManager
                 = new GridLayoutManager(this, 2);
@@ -130,7 +137,7 @@ public class MainActivity extends AppCompatActivity
 
                                 JSONObject jsonObject = responseJSONArray.getJSONObject(i);
 
-                                Movie movie = new Movie();
+                                /*Movie movie = new Movie();
 
                                 movie.setId(jsonObject.getInt("id"));
                                 movie.setTitle(jsonObject.getString("original_title"));
@@ -140,6 +147,27 @@ public class MainActivity extends AppCompatActivity
                                 movie.setPlotSynopsis(jsonObject.getString("overview"));
 
                                 movieList.add(movie);
+
+                                //int id = mMovie.getId();
+                                //String title = mMovie.getTitle();
+
+                                //MovieEntry movieEntry = new MovieEntry(id, title);
+                                // Save data with room
+                                //mDb.movieDao().insertBook(movieEntry);
+                                //finish();*/
+
+                                int id = jsonObject.getInt("id");
+                                String title = jsonObject.getString("original_title");
+                                String moviePoster = jsonObject.getString("poster_path");
+                                String release = jsonObject.getString("release_date");
+                                String voteAverage = jsonObject.getString("vote_average");
+                                String plotSynopsis = jsonObject.getString("overview");
+
+                                MovieEntry movieEntry = new MovieEntry(id, title, moviePoster,
+                                        release, voteAverage, plotSynopsis);
+
+                                mDb.movieDao().insertBook(movieEntry);
+                                finish();
 
                             }
                         } catch (JSONException e) {
