@@ -67,17 +67,24 @@ public class MainActivity extends AppCompatActivity
         // Initialize member variable for the data base
         mDb = AppDatabase.getInstance(getApplicationContext());
 
+
         GridLayoutManager layoutManager
                 = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
         movieList = new ArrayList<>();
-        mMoviesAdapter = new MoviesAdapter(movieList, this);
+        mMoviesAdapter = new MoviesAdapter(this, this);
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         getMoviesData();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mMoviesAdapter.setMovies(mDb.movieDao().loadAllMovies());
     }
 
     // Method called showMoviesDataView to show the data and hide the error
@@ -111,12 +118,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListItemClick(Movie clickedMovie) {
-        Context context = this;
+    public void onListItemClick(int id) {
+        /*Context context = this;
         Class detailActivity = DetailActivity.class;
         Intent detailActivityIntent = new Intent(context, detailActivity);
         detailActivityIntent.putExtra(Intent.EXTRA_TEXT, clickedMovie);
-        startActivity(detailActivityIntent);
+        startActivity(detailActivityIntent);*/
     }
 
     public void getMoviesData() {
@@ -167,7 +174,6 @@ public class MainActivity extends AppCompatActivity
                                         release, voteAverage, plotSynopsis);
 
                                 mDb.movieDao().insertBook(movieEntry);
-                                finish();
 
                             }
                         } catch (JSONException e) {

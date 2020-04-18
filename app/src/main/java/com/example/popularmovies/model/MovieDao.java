@@ -3,6 +3,7 @@ package com.example.popularmovies.model;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface MovieDao {
     @Query("SELECT * FROM movies ORDER BY id")
     List<MovieEntry> loadAllMovies();
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBook(MovieEntry movieEntry);
 
     @Delete

@@ -11,7 +11,7 @@ import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.model.MovieDao;
 import com.example.popularmovies.model.MovieEntry;
 
-@Database(entities = {MovieEntry.class}, version = 1, exportSchema = false)
+@Database(entities = {MovieEntry.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     private static final String LOG_TAG = AppDatabase.class.getSimpleName();
     private static final Object LOCK = new Object();

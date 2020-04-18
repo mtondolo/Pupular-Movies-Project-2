@@ -12,21 +12,27 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.model.MovieEntry;
 
 import java.util.List;
 
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
-    private List<Movie> mMovies;
+    //private List<Movie> mMovies;
+
+    private List<MovieEntry> mMovieEntries;
+    private final Context mContext;
+
     final private MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
-        void onListItemClick(Movie clickedMovie);
+        void onListItemClick(int id);
     }
 
-    public MoviesAdapter(List<Movie> movies, MovieAdapterOnClickHandler clickHandler) {
-        mMovies = movies;
+    public MoviesAdapter(Context context, MovieAdapterOnClickHandler clickHandler) {
+        mContext = context;
+        ;
         mClickHandler = clickHandler;
     }
 
@@ -44,13 +50,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
-        Movie movie = mMovies.get(position);
-        loadGridUIPoster(holder, movie);
-    }
+        MovieEntry movieEntry = mMovieEntries.get(position);
 
-    private void loadGridUIPoster(@NonNull MoviesAdapterViewHolder holder, Movie movie) {
         Glide.with(holder.itemView.getContext())
-                .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
+                .load(String.valueOf(NetworkUtils.buildPosterUrl(movieEntry.getMoviePoster())))
                 .placeholder(R.color.colorPrimary)
                 .centerCrop()
                 .into(holder.mMoviesImageView);
@@ -58,10 +61,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
     @Override
     public int getItemCount() {
-        if (mMovies == null) {
+        if (mMovieEntries == null) {
             return 0;
         }
-        return mMovies.size();
+        return mMovieEntries.size();
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder
@@ -76,14 +79,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
-            int position = getAdapterPosition();
+            /*int position = getAdapterPosition();
             Movie clickedMovie = mMovies.get(position);
-            mClickHandler.onListItemClick(clickedMovie);
+            mClickHandler.onListItemClick(clickedMovie);*/
         }
     }
 
-    void setMoviesData(List<Movie> moviesData) {
-        mMovies = moviesData;
+    void setMovies(List<MovieEntry> movieEntries) {
+        mMovieEntries = movieEntries;
         notifyDataSetChanged();
     }
 }
