@@ -14,23 +14,26 @@ public class MovieEntry {
     private String releaseDate;
     private String voteAverage;
     private String plotSynopsis;
+    private String favourite;
 
     @Ignore
-    public MovieEntry(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis) {
+    public MovieEntry(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis, String favourite) {
         this.title = title;
         this.moviePoster = moviePoster;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
+        this.favourite = favourite;
     }
 
-    public MovieEntry(int id, String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis) {
+    public MovieEntry(int id, String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis, String favourite) {
         this.id = id;
         this.title = title;
         this.moviePoster = moviePoster;
         this.releaseDate = releaseDate;
         this.voteAverage = voteAverage;
         this.plotSynopsis = plotSynopsis;
+        this.favourite = favourite;
     }
 
     public int getId() {
@@ -61,6 +64,10 @@ public class MovieEntry {
         this.id = id;
     }
 
+    public String getFavourite() {
+        return favourite;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -79,5 +86,9 @@ public class MovieEntry {
 
     public void setPlotSynopsis(String plotSynopsis) {
         this.plotSynopsis = plotSynopsis;
+    }
+
+    public void setFavourite(String favourite) {
+        this.favourite = favourite;
     }
 }

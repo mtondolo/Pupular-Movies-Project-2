@@ -158,9 +158,10 @@ public class MainActivity extends AppCompatActivity
                                 String release = jsonObject.getString("release_date");
                                 String voteAverage = jsonObject.getString("vote_average");
                                 String plotSynopsis = jsonObject.getString("overview");
+                                String favourite = jsonObject.optString("");
 
                                 final MovieEntry movieEntry = new MovieEntry(id, title, moviePoster,
-                                        release, voteAverage, plotSynopsis);
+                                        release, voteAverage, plotSynopsis, favourite);
 
                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                     @Override

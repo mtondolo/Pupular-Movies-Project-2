@@ -138,15 +138,17 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void favoriteAMovie() {
-
-       /* // Get data to save
-        int id = mMovie.getId();
-        String title = mMovie.getTitle();
-
-        MovieEntry movieEntry = new MovieEntry(id, title);
-        // Save data with room
-        mDb.movieDao().insertBook(movieEntry);
-        finish();*/
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mMovieId != DEFAULT_MOVIE_ID) {
+                    //update book
+                    movie.setFavourite("Favourite");
+                    mDb.movieDao().updateMovie(movie);
+                }
+                finish();
+            }
+        });
     }
 
     public void getTrailer() {
