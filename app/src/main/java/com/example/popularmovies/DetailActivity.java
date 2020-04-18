@@ -20,9 +20,11 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.example.popularmovies.Utils.AppExecutors;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.AppDatabase;
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.model.MovieEntry;
 import com.example.popularmovies.model.Review;
 import com.example.popularmovies.model.Trailer;
 
@@ -61,6 +63,11 @@ public class DetailActivity extends AppCompatActivity {
     // Member variable for the Database
     private AppDatabase mDb;
 
+    public static final String EXTRA_MOVIE_ID = "extraMovieId";
+    public static final String INSTANCE_MOVIE_ID = "instanceMovieId";
+    private static final int DEFAULT_MOVIE_ID = -1;
+    private int mMovieId = DEFAULT_MOVIE_ID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,16 +77,44 @@ public class DetailActivity extends AppCompatActivity {
         // Initialize member variable for the data base
         mDb = AppDatabase.getInstance(getApplicationContext());
 
-        mTrailerList = new ArrayList<>();
-        mReviewList = new ArrayList<>();
+        if (savedInstanceState != null && savedInstanceState.containsKey(INSTANCE_MOVIE_ID)) {
+            mMovieId = savedInstanceState.getInt(INSTANCE_MOVIE_ID, DEFAULT_MOVIE_ID);
+        }
 
         Intent intent = getIntent();
-        mMovie = intent.getParcelableExtra(Intent.EXTRA_TEXT);
-        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
-            setTitle(mMovie.getTitle());
-            loadDetailUIPoster();
-            populateUI();
-        }
+        if (intent != null && intent.hasExtra(EXTRA_MOVIE_ID))
+            if (mMovieId == DEFAULT_MOVIE_ID)
+                // populate the UI
+                mMovieId = intent.getIntExtra(EXTRA_MOVIE_ID, DEFAULT_MOVIE_ID);
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final MovieEntry movie = mDb.movieDao().loadMovieById(mMovieId);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setTitle(movie.getTitle());
+                        Glide.with(getApplicationContext())
+                                .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
+                                .centerCrop()
+                                .placeholder(R.color.colorPrimary)
+                                .into(mPosterImageView);
+                        String rating = movie.getVoteAverage();
+                        mRatingsTextView.setText(rating);
+                        String releaseDate = movie.getReleaseDate();
+                        mReleaseTextView.setText(releaseDate);
+                        String plotSynopsis = movie.getPlotSynopsis();
+                        mPlotSynopsisTextView.setText(plotSynopsis);
+
+                    }
+                });
+            }
+        });
+
+
+        mTrailerList = new ArrayList<>();
+        mReviewList = new ArrayList<>();
 
         mTrailerImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +134,6 @@ public class DetailActivity extends AppCompatActivity {
                 favoriteAMovie();
             }
         });
-
     }
 
     private void favoriteAMovie() {
@@ -114,31 +148,12 @@ public class DetailActivity extends AppCompatActivity {
         finish();*/
     }
 
-    private void populateUI() {
-        String rating = mMovie.getVoteAverage();
-        mRatingsTextView.setText(rating);
-        String releaseDate = mMovie.getReleaseDate();
-        mReleaseTextView.setText(releaseDate);
-        String plotSynopsis = mMovie.getPlotSynopsis();
-        mPlotSynopsisTextView.setText(plotSynopsis);
-    }
-
-    private void loadDetailUIPoster() {
-        Glide.with(getApplicationContext())
-                .load(String.valueOf(NetworkUtils.buildPosterUrl(mMovie.getMoviePoster())))
-                .centerCrop()
-                .placeholder(R.color.colorPrimary)
-                .into(mPosterImageView);
-        setTitle(mMovie.getTitle());
-    }
-
     public void getTrailer() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
                 NetworkUtils.buildTrailerUrl(mMovie.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
-
                     @Override
                     public void onResponse(JSONObject response) {
                         try {

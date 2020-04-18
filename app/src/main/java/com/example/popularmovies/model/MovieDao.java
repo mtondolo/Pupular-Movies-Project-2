@@ -19,4 +19,7 @@ public interface MovieDao {
 
     @Delete
     void deleteBook(MovieEntry movieEntry);
+
+    @Query("SELECT * FROM movies WHERE id = :id")
+    MovieEntry loadMovieById(int id);
 }

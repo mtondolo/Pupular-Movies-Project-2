@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -129,12 +131,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListItemClick(int id) {
-        /*Context context = this;
-        Class detailActivity = DetailActivity.class;
-        Intent detailActivityIntent = new Intent(context, detailActivity);
-        detailActivityIntent.putExtra(Intent.EXTRA_TEXT, clickedMovie);
-        startActivity(detailActivityIntent);*/
+    public void onClick(int id) {
+        Intent detailActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
+        detailActivityIntent.putExtra(DetailActivity.EXTRA_MOVIE_ID, id);
+        startActivity(detailActivityIntent);
     }
 
     public void getMoviesData() {

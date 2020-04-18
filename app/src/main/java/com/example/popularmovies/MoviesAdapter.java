@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
-import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.model.MovieEntry;
 
 import java.util.List;
@@ -27,12 +26,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     final private MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
-        void onListItemClick(int id);
+        void onClick(int id);
     }
 
     public MoviesAdapter(Context context, MovieAdapterOnClickHandler clickHandler) {
         mContext = context;
-        ;
         mClickHandler = clickHandler;
     }
 
@@ -79,9 +77,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         @Override
         public void onClick(View v) {
-            /*int position = getAdapterPosition();
-            Movie clickedMovie = mMovies.get(position);
-            mClickHandler.onListItemClick(clickedMovie);*/
+            int adapterPosition = getAdapterPosition();
+            MovieEntry movieEntry = mMovieEntries.get(adapterPosition);
+            int movieId = movieEntry.getId();
+            mClickHandler.onClick(movieId);
         }
     }
 
