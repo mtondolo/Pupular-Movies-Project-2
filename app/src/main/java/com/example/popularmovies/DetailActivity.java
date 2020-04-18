@@ -21,8 +21,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.NetworkUtils;
+import com.example.popularmovies.model.AppDatabase;
 import com.example.popularmovies.model.Movie;
-import com.example.popularmovies.model.MovieEntry;
 import com.example.popularmovies.model.Review;
 import com.example.popularmovies.model.Trailer;
 
