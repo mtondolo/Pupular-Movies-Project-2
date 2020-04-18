@@ -53,6 +53,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
                 .placeholder(R.color.colorPrimary)
                 .centerCrop()
                 .into(holder.mMoviesImageView);
+
+        if (movieEntry.getFavourite().isEmpty()) {
+            holder.mFavouriteImageView.setVisibility(View.INVISIBLE);
+        } else {
+            holder.mFavouriteImageView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -66,10 +72,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener {
         final ImageView mMoviesImageView;
+        final ImageView mFavouriteImageView;
 
         MoviesAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mMoviesImageView = itemView.findViewById(R.id.iv_movie_poster);
+            mFavouriteImageView = itemView.findViewById(R.id.favorite_iv);
             itemView.setOnClickListener(this);
         }
 

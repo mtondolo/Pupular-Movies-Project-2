@@ -112,6 +112,10 @@ public class MainActivity extends AppCompatActivity
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
+    private void markMovieAsFavourite() {
+        mErrorMessageTextView.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.movie, menu);
