@@ -105,10 +105,10 @@ public class DetailActivity extends AppCompatActivity {
     private void favoriteAMovie() {
 
         // Get data to save
-        String apiId = mMovie.getMovieId();
+        int id = mMovie.getId();
         String title = mMovie.getTitle();
 
-        MovieEntry movieEntry = new MovieEntry(apiId, title);
+        MovieEntry movieEntry = new MovieEntry(id, title);
         // Save data with room
         mDb.movieDao().insertBook(movieEntry);
         finish();
@@ -136,7 +136,7 @@ public class DetailActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildTrailerUrl(mMovie.getMovieId()).toString(), null,
+                NetworkUtils.buildTrailerUrl(mMovie.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -167,7 +167,7 @@ public class DetailActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildReviewUrl(mMovie.getMovieId()).toString(), null,
+                NetworkUtils.buildReviewUrl(mMovie.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override

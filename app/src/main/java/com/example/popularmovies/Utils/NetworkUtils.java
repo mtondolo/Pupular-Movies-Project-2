@@ -64,10 +64,10 @@ public class NetworkUtils {
         return url;
     }
 
-    public static URL buildTrailerUrl(String movie_id) {
+    public static URL buildTrailerUrl(int movie_id) {
         Uri buildTrailerUrl = Uri.parse(MOVIES_DB_TRAILER_URL)
                 .buildUpon()
-                .appendEncodedPath(movie_id)
+                .appendEncodedPath(String.valueOf(movie_id))
                 .appendEncodedPath(video_path)
                 .appendQueryParameter(QUERY_PARAM, api_key.get())
                 .build();
@@ -80,10 +80,10 @@ public class NetworkUtils {
         return url;
     }
 
-    public static URL buildReviewUrl(String movie_id) {
+    public static URL buildReviewUrl(int movie_id) {
         Uri buildReviewUrl = Uri.parse(MOVIES_DB_TRAILER_URL)
                 .buildUpon()
-                .appendEncodedPath(movie_id)
+                .appendEncodedPath(String.valueOf(movie_id))
                 .appendEncodedPath(review_path)
                 .appendQueryParameter(QUERY_PARAM, api_key.get())
                 .build();

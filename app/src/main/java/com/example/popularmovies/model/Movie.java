@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Movie implements Parcelable, Comparable<Movie> {
-    private String movieId;
+    private int id;
     private String title;
     private String moviePoster;
     private String releaseDate;
@@ -14,9 +14,9 @@ public class Movie implements Parcelable, Comparable<Movie> {
     public Movie() {
     }
 
-    public Movie(String movieId, String title, String moviePoster, String releaseDate, String voteAverage,
+    public Movie(int id, String title, String moviePoster, String releaseDate, String voteAverage,
                  String plotSynopsis) {
-        this.movieId = movieId;
+        this.id = id;
         this.title = title;
         this.moviePoster = moviePoster;
         this.releaseDate = releaseDate;
@@ -24,8 +24,8 @@ public class Movie implements Parcelable, Comparable<Movie> {
         this.plotSynopsis = plotSynopsis;
     }
 
-    public void setMovieId(String movieId) {
-        this.movieId = movieId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {
@@ -48,8 +48,8 @@ public class Movie implements Parcelable, Comparable<Movie> {
         this.plotSynopsis = plotSynopsis;
     }
 
-    public String getMovieId() {
-        return movieId;
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -73,7 +73,7 @@ public class Movie implements Parcelable, Comparable<Movie> {
     }
 
     private Movie(Parcel parcel) {
-        movieId = parcel.readString();
+        id = parcel.readInt();
         title = parcel.readString();
         moviePoster = parcel.readString();
         releaseDate = parcel.readString();
@@ -88,7 +88,7 @@ public class Movie implements Parcelable, Comparable<Movie> {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(movieId);
+        dest.writeInt(id);
         dest.writeString(title);
         dest.writeString(moviePoster);
         dest.writeString(releaseDate);

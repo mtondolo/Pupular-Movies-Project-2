@@ -1,6 +1,5 @@
 package com.example.popularmovies.model;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -10,18 +9,18 @@ public class MovieEntry {
 
     @PrimaryKey(autoGenerate = true)
     private int roomDbId;
-    private String apiId;
+    private int id;
     private String title;
 
     @Ignore
-    public MovieEntry(String apiId, String title) {
-        this.apiId = apiId;
+    public MovieEntry(int id, String title) {
+        this.id = id;
         this.title = title;
     }
 
-    public MovieEntry(int roomDbId, String apiId, String title) {
+    public MovieEntry(int roomDbId, int id, String title) {
         this.roomDbId = roomDbId;
-        this.apiId = apiId;
+        this.id = id;
         this.title = title;
     }
 
@@ -29,8 +28,8 @@ public class MovieEntry {
         return roomDbId;
     }
 
-    public String getApiId() {
-        return apiId;
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {
@@ -41,8 +40,8 @@ public class MovieEntry {
         this.roomDbId = roomDbId;
     }
 
-    public void setApiId(String apiId) {
-        this.apiId = apiId;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setTitle(String title) {
