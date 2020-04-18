@@ -183,7 +183,7 @@ public class DetailActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildReviewUrl(mMovie.getId()).toString(), null,
+                NetworkUtils.buildReviewUrl(movie.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
