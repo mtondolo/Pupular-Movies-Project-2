@@ -67,6 +67,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String INSTANCE_MOVIE_ID = "instanceMovieId";
     private static final int DEFAULT_MOVIE_ID = -1;
     private int mMovieId = DEFAULT_MOVIE_ID;
+    private MovieEntry movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +91,7 @@ public class DetailActivity extends AppCompatActivity {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final MovieEntry movie = mDb.movieDao().loadMovieById(mMovieId);
+                movie = mDb.movieDao().loadMovieById(mMovieId);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -152,7 +153,7 @@ public class DetailActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildTrailerUrl(mMovie.getId()).toString(), null,
+                NetworkUtils.buildTrailerUrl(movie.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
