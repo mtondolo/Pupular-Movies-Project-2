@@ -2,10 +2,10 @@ package com.example.popularmovies;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,14 +24,13 @@ import com.android.volley.toolbox.Volley;
 import com.example.popularmovies.Utils.AppExecutors;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.AppDatabase;
-import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.model.MovieEntry;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,6 +41,8 @@ public class MainActivity extends AppCompatActivity
         implements MoviesAdapter.MovieAdapterOnClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private ConstraintLayout constraintLayout;
 
     @BindView(R.id.recyclerview_movies)
     RecyclerView mRecyclerView;
@@ -55,10 +55,9 @@ public class MainActivity extends AppCompatActivity
 
     private MoviesAdapter mMoviesAdapter;
 
-    private static List<Movie> movieList;
-
     // Member variable for the Database
     private AppDatabase mDb;
+    private static List<MovieEntry> movies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,21 +65,20 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        constraintLayout = findViewById(R.id.constraintlayout);
+
         // Initialize member variable for the data base
         mDb = AppDatabase.getInstance(getApplicationContext());
-
 
         GridLayoutManager layoutManager
                 = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
-        movieList = new ArrayList<>();
         mMoviesAdapter = new MoviesAdapter(this, this);
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         getMoviesData();
-
     }
 
     @Override
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final List<MovieEntry> movies = mDb.movieDao().loadAllMovies();
+                movies = mDb.movieDao().loadAllMovies();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -112,10 +110,6 @@ public class MainActivity extends AppCompatActivity
         mErrorMessageTextView.setVisibility(View.VISIBLE);
     }
 
-    private void markMovieAsFavourite() {
-        mErrorMessageTextView.setVisibility(View.VISIBLE);
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.movie, menu);
@@ -128,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         if (menuItemThatWasSelected == R.id.action_sort) {
             sortMoviesByTopRated();
             mMoviesAdapter.notifyDataSetChanged();
-            Toast.makeText(this, R.string.sort_order_message, Toast.LENGTH_SHORT).show();
+            Snackbar.make(constraintLayout, R.string.sort_order_message, Snackbar.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -155,7 +149,6 @@ public class MainActivity extends AppCompatActivity
                             for (int i = 0; i < responseJSONArray.length(); i++) {
 
                                 JSONObject jsonObject = responseJSONArray.getJSONObject(i);
-
                                 int id = jsonObject.getInt("id");
                                 String title = jsonObject.getString("original_title");
                                 String moviePoster = jsonObject.getString("poster_path");
@@ -194,7 +187,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public static void sortMoviesByTopRated() {
-        Collections.sort(movieList, Collections.<Movie>reverseOrder());
+        Collections.sort(movies, Collections.<MovieEntry>reverseOrder());
     }
 }
 

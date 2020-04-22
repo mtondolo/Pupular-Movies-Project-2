@@ -1,5 +1,6 @@
 package com.example.popularmovies.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -26,4 +27,7 @@ public interface MovieDao {
 
     @Query("SELECT * FROM movies WHERE id = :id")
     MovieEntry loadMovieById(int id);
+
+    @Query("SELECT * FROM movies ORDER BY voteAverage DESC")
+    List<MovieEntry> sortMoviesByTopRated();
 }

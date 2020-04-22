@@ -5,7 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "movies")
-public class MovieEntry {
+public class MovieEntry implements Comparable<MovieEntry>{
 
     @PrimaryKey()
     private int id;
@@ -90,5 +90,10 @@ public class MovieEntry {
 
     public void setFavourite(String favourite) {
         this.favourite = favourite;
+    }
+
+    @Override
+    public int compareTo(MovieEntry o) {
+        return this.getVoteAverage().compareTo(o.getVoteAverage());
     }
 }
