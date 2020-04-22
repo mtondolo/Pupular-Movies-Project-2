@@ -54,6 +54,8 @@ public class DetailActivity extends AppCompatActivity {
     TextView mReviewsTextView;
     @BindView(R.id.favorite_btn)
     TextView mFavoriteButton;
+    @BindView(R.id.unfavorite_btn)
+    TextView mUnfavoriteButton;
     private Movie mMovie;
     private Trailer mTrailer;
     private static List<Trailer> mTrailerList;
@@ -132,21 +134,62 @@ public class DetailActivity extends AppCompatActivity {
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                favoriteAMovie();
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mMovieId != DEFAULT_MOVIE_ID) {
+                            //update book
+                            movie.setFavourite("Favourite");
+                            mDb.movieDao().updateMovie(movie);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showRemoveAsFavouriteMovieButton();
+                                }
+                            });
+                        }
+                        finish();
+                    }
+                });
+            }
+        });
+
+        mUnfavoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mMovieId != DEFAULT_MOVIE_ID) {
+                    //update movie
+                    movie.setFavourite(null);
+                    mDb.movieDao().updateMovie(movie);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            showFavouriteMovieButton();
+                        }
+                    });
+                }
+                finish();
             }
         });
     }
 
-    private void favoriteAMovie() {
+    @Override
+    protected void onResume() {
+        super.onResume();
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                if (mMovieId != DEFAULT_MOVIE_ID) {
-                    //update book
-                    movie.setFavourite("Favourite");
-                    mDb.movieDao().updateMovie(movie);
-                }
-                finish();
+                final MovieEntry movie = mDb.movieDao().loadMovieById(mMovieId);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (movie.getFavourite().isEmpty()) {
+                            showFavouriteMovieButton();
+                        } else {
+                            showRemoveAsFavouriteMovieButton();
+                        }
+                    }
+                });
             }
         });
     }
@@ -226,11 +269,20 @@ public class DetailActivity extends AppCompatActivity {
 
     public void openWebPage(String url) {
         Context context = this;
-
         // Launch the ReviewActivity using an explicit Intent
         Class destinationClass = ReviewActivity.class;
         Intent intentToStartReviewActivity = new Intent(context, destinationClass);
         intentToStartReviewActivity.putExtra(Intent.EXTRA_TEXT, url);
         startActivity(intentToStartReviewActivity);
+    }
+
+    public void showFavouriteMovieButton() {
+        mFavoriteButton.setVisibility(View.VISIBLE);
+        mUnfavoriteButton.setVisibility(View.INVISIBLE);
+    }
+
+    public void showRemoveAsFavouriteMovieButton() {
+        mUnfavoriteButton.setVisibility(View.VISIBLE);
+        mFavoriteButton.setVisibility(View.INVISIBLE);
     }
 }

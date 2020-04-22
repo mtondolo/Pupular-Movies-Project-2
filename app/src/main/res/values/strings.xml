@@ -9,4 +9,6 @@
     <string name="menu_title_sort">Sort</string>
     <string name="favorite_display">Mark as Favorite</string>
     <string name="trailer_display">Play Trailer</string>
+    <string name="unfavorite_favorite">Remove As Favorite</string>
+    <string name="favorite_stattus_key">favorite_status_key</string>
 </resources>
