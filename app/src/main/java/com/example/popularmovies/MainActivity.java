@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -81,16 +82,15 @@ public class MainActivity extends AppCompatActivity
 
         // Initialize member variable for the data base
         mDb = AppDatabase.getInstance(getApplicationContext());
-        retrieveMovies();
+        setUpViewModel();
     }
 
-    private void retrieveMovies() {
-        Log.d(TAG, "Actively retrieving the books from the database");
-        final LiveData<List<MovieEntry>> movies = mDb.movieDao().loadAllMovies();
-        movies.observe(this, new Observer<List<MovieEntry>>() {
+    private void setUpViewModel() {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<MovieEntry>>() {
             @Override
             public void onChanged(List<MovieEntry> movieEntries) {
-                Log.d(TAG, "Receiving database update from LiveData");
+                Log.d(TAG, "Updating list of movies from LiveData in ViewModel");
                 mMoviesAdapter.setMovies(movieEntries);
             }
         });
