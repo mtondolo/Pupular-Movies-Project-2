@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity
                                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        mDb.movieDao().insertBook(movieEntry);
+                                        mDb.movieDao().insertMovie(movieEntry);
                                     }
                                 });
                             }

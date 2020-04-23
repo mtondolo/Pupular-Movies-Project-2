@@ -1,6 +1,8 @@
 package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import android.content.ActivityNotFoundException;
 
@@ -33,12 +35,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
+
+    private String TAG = DetailActivity.class.getSimpleName();
 
     @BindView(R.id.ratings_tv)
     TextView mRatingsTextView;
@@ -56,7 +61,7 @@ public class DetailActivity extends AppCompatActivity {
     TextView mFavoriteButton;
     @BindView(R.id.unfavorite_btn)
     TextView mUnfavoriteButton;
-    private Movie mMovie;
+    //private Movie mMovie;
     private Trailer mTrailer;
     private static List<Trailer> mTrailerList;
     private static List<Review> mReviewList;
@@ -64,6 +69,12 @@ public class DetailActivity extends AppCompatActivity {
 
     // Member variable for the Database
     private AppDatabase mDb;
+    private String mTitle;
+    private String mMoviePoster;
+    private String mReleaseDate;
+    private String mVoteAverage;
+    private String mPlotSynopsis;
+    private String mFavourite;
 
     public static final String EXTRA_MOVIE_ID = "extraMovieId";
     public static final String INSTANCE_MOVIE_ID = "instanceMovieId";
@@ -87,34 +98,16 @@ public class DetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_MOVIE_ID))
             if (mMovieId == DEFAULT_MOVIE_ID)
-                // populate the UI
                 mMovieId = intent.getIntExtra(EXTRA_MOVIE_ID, DEFAULT_MOVIE_ID);
-
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        final LiveData<MovieEntry> movie = mDb.movieDao().loadMovieById(mMovieId);
+        movie.observe(this, new Observer<MovieEntry>() {
             @Override
-            public void run() {
-                movie = mDb.movieDao().loadMovieById(mMovieId);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setTitle(movie.getTitle());
-                        Glide.with(getApplicationContext())
-                                .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
-                                .centerCrop()
-                                .placeholder(R.color.colorPrimary)
-                                .into(mPosterImageView);
-                        String rating = movie.getVoteAverage();
-                        mRatingsTextView.setText(rating);
-                        String releaseDate = movie.getReleaseDate();
-                        mReleaseTextView.setText(releaseDate);
-                        String plotSynopsis = movie.getPlotSynopsis();
-                        mPlotSynopsisTextView.setText(plotSynopsis);
-
-                    }
-                });
+            public void onChanged(MovieEntry movieEntry) {
+                movie.removeObserver(this);
+                Log.v(TAG, "Receiving database update from LiveData");
+                populateUI(movieEntry);
             }
         });
-
 
         mTrailerList = new ArrayList<>();
         mReviewList = new ArrayList<>();
@@ -134,33 +127,28 @@ public class DetailActivity extends AppCompatActivity {
         mFavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mMovieId != DEFAULT_MOVIE_ID) {
-                            //update book
-                            movie.setFavourite("Favourite");
-                            mDb.movieDao().updateMovie(movie);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showRemoveAsFavouriteMovieButton();
-                                }
-                            });
-                        }
-                        finish();
-                    }
-                });
+                markMovieAsFavourite();
             }
         });
 
         mUnfavoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                removeAsFavourite();
+            }
+        });
+    }
+
+    private void removeAsFavourite() {
+        final MovieEntry movieEntry = new MovieEntry(mTitle, mMoviePoster, mReleaseDate,
+                mVoteAverage, mPlotSynopsis, mFavourite);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
                 if (mMovieId != DEFAULT_MOVIE_ID) {
                     //update movie
-                    movie.setFavourite(null);
-                    mDb.movieDao().updateMovie(movie);
+                    movieEntry.setFavourite(null);
+                    mDb.movieDao().updateMovie(movieEntry);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -173,25 +161,46 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void markMovieAsFavourite() {
+        final MovieEntry movieEntry = new MovieEntry(mTitle, mMoviePoster, mReleaseDate,
+                mVoteAverage, mPlotSynopsis, mFavourite);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final MovieEntry movie = mDb.movieDao().loadMovieById(mMovieId);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (movie.getFavourite().isEmpty()) {
-                            showFavouriteMovieButton();
-                        } else {
+                if (mMovieId != DEFAULT_MOVIE_ID) {
+                    //update book
+                    movieEntry.setFavourite("Favourite");
+                    mDb.movieDao().updateMovie(movieEntry);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
                             showRemoveAsFavouriteMovieButton();
                         }
-                    }
-                });
+                    });
+                }
+                finish();
             }
         });
+    }
+
+    private void populateUI(MovieEntry movie) {
+
+        if (movie == null) {
+            return;
+        }
+
+        setTitle(movie.getTitle());
+        Glide.with(getApplicationContext())
+                .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
+                .centerCrop()
+                .placeholder(R.color.colorPrimary)
+                .into(mPosterImageView);
+        String rating = movie.getVoteAverage();
+        mRatingsTextView.setText(rating);
+        String releaseDate = movie.getReleaseDate();
+        mReleaseTextView.setText(releaseDate);
+        String plotSynopsis = movie.getPlotSynopsis();
+        mPlotSynopsisTextView.setText(plotSynopsis);
     }
 
     public void getTrailer() {

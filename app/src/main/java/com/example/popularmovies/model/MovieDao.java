@@ -18,7 +18,7 @@ public interface MovieDao {
     LiveData<List<MovieEntry>> loadAllMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertBook(MovieEntry movieEntry);
+    void insertMovie(MovieEntry movieEntry);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateMovie(MovieEntry movieEntry);
@@ -27,7 +27,7 @@ public interface MovieDao {
     void deleteBook(MovieEntry movieEntry);
 
     @Query("SELECT * FROM movies WHERE id = :id")
-    MovieEntry loadMovieById(int id);
+    LiveData<MovieEntry> loadMovieById(int id);
 
     @Query("SELECT * FROM movies ORDER BY voteAverage DESC")
     List<MovieEntry> sortMoviesByTopRated();
