@@ -3,6 +3,8 @@ package com.example.popularmovies;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -67,9 +69,6 @@ public class MainActivity extends AppCompatActivity
 
         constraintLayout = findViewById(R.id.constraintlayout);
 
-        // Initialize member variable for the data base
-        mDb = AppDatabase.getInstance(getApplicationContext());
-
         GridLayoutManager layoutManager
                 = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
@@ -79,21 +78,20 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(mMoviesAdapter);
 
         getMoviesData();
+
+        // Initialize member variable for the data base
+        mDb = AppDatabase.getInstance(getApplicationContext());
+        retrieveMovies();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+    private void retrieveMovies() {
+        Log.d(TAG, "Actively retrieving the books from the database");
+        final LiveData<List<MovieEntry>> movies = mDb.movieDao().loadAllMovies();
+        movies.observe(this, new Observer<List<MovieEntry>>() {
             @Override
-            public void run() {
-                movies = mDb.movieDao().loadAllMovies();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mMoviesAdapter.setMovies(movies);
-                    }
-                });
+            public void onChanged(List<MovieEntry> movieEntries) {
+                Log.d(TAG, "Receiving database update from LiveData");
+                mMoviesAdapter.setMovies(movieEntries);
             }
         });
     }

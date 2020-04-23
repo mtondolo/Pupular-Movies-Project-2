@@ -1,5 +1,6 @@
 package com.example.popularmovies.model;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.ColumnInfo;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -14,7 +15,7 @@ import java.util.List;
 public interface MovieDao {
 
     @Query("SELECT * FROM movies ORDER BY id")
-    List<MovieEntry> loadAllMovies();
+    LiveData<List<MovieEntry>> loadAllMovies();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertBook(MovieEntry movieEntry);
