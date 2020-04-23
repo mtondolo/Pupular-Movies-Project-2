@@ -3,6 +3,7 @@ package com.example.popularmovies;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.ActivityNotFoundException;
 
@@ -99,11 +100,16 @@ public class DetailActivity extends AppCompatActivity {
         if (intent != null && intent.hasExtra(EXTRA_MOVIE_ID))
             if (mMovieId == DEFAULT_MOVIE_ID)
                 mMovieId = intent.getIntExtra(EXTRA_MOVIE_ID, DEFAULT_MOVIE_ID);
+
+        DetailViewModelFactory factory = new DetailViewModelFactory(mDb, mMovieId);
+
         final LiveData<MovieEntry> movie = mDb.movieDao().loadMovieById(mMovieId);
-        movie.observe(this, new Observer<MovieEntry>() {
+        final DetailViewModel viewModel
+                = ViewModelProviders.of(this, factory).get(DetailViewModel.class);
+        viewModel.getMovie().observe(this, new Observer<MovieEntry>() {
             @Override
             public void onChanged(MovieEntry movieEntry) {
-                movie.removeObserver(this);
+                viewModel.getMovie().removeObserver(this);
                 Log.v(TAG, "Receiving database update from LiveData");
                 populateUI(movieEntry);
             }
