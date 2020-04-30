@@ -5,7 +5,7 @@ import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "movies")
-public class MovieEntry implements Comparable<MovieEntry>{
+public class MovieEntry implements Comparable<MovieEntry> {
 
     @PrimaryKey()
     private int id;
@@ -15,16 +15,6 @@ public class MovieEntry implements Comparable<MovieEntry>{
     private String voteAverage;
     private String plotSynopsis;
     private String favourite;
-
-    @Ignore
-    public MovieEntry(String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis, String favourite) {
-        this.title = title;
-        this.moviePoster = moviePoster;
-        this.releaseDate = releaseDate;
-        this.voteAverage = voteAverage;
-        this.plotSynopsis = plotSynopsis;
-        this.favourite = favourite;
-    }
 
     public MovieEntry(int id, String title, String moviePoster, String releaseDate, String voteAverage, String plotSynopsis, String favourite) {
         this.id = id;
@@ -66,26 +56,6 @@ public class MovieEntry implements Comparable<MovieEntry>{
 
     public String getFavourite() {
         return favourite;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setMoviePoster(String moviePoster) {
-        this.moviePoster = moviePoster;
-    }
-
-    public void setReleaseDate(String releaseDate) {
-        this.releaseDate = releaseDate;
-    }
-
-    public void setVoteAverage(String voteAverage) {
-        this.voteAverage = voteAverage;
-    }
-
-    public void setPlotSynopsis(String plotSynopsis) {
-        this.plotSynopsis = plotSynopsis;
     }
 
     public void setFavourite(String favourite) {

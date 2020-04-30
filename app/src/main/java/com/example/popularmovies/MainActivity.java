@@ -168,11 +168,8 @@ public class MainActivity extends AppCompatActivity
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            mLoadingIndicator.setVisibility(View.INVISIBLE);
                         }
-                        mMoviesAdapter.notifyDataSetChanged();
                         mLoadingIndicator.setVisibility(View.INVISIBLE);
-                        showMoviesDataView();
                     }
                 }, new Response.ErrorListener() {
             @Override

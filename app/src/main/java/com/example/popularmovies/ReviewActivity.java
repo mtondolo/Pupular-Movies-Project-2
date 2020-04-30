@@ -21,7 +21,7 @@ public class ReviewActivity extends AppCompatActivity {
 
         Intent intentThatStartedThisActivity = getIntent();
 
-        // Display the contents news link that was passed from NewsActivity
+        // Display the contents news link that was passed from MainActivity
         if (intentThatStartedThisActivity != null) {
             if (intentThatStartedThisActivity.hasExtra(Intent.EXTRA_TEXT)) {
                 mUrl = intentThatStartedThisActivity.getStringExtra(Intent.EXTRA_TEXT);

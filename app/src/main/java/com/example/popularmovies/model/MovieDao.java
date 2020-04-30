@@ -23,9 +23,6 @@ public interface MovieDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateMovie(MovieEntry movieEntry);
 
-    @Delete
-    void deleteBook(MovieEntry movieEntry);
-
     @Query("SELECT * FROM movies WHERE id = :id")
     LiveData<MovieEntry> loadMovieById(int id);
 

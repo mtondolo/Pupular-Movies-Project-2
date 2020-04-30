@@ -59,7 +59,6 @@ public class DetailActivity extends AppCompatActivity {
     TextView mFavoriteButton;
     @BindView(R.id.unfavorite_btn)
     TextView mUnfavoriteButton;
-    //private Movie mMovie;
     private Trailer mTrailer;
     private static List<Trailer> mTrailerList;
     private static List<Review> mReviewList;
@@ -67,12 +66,6 @@ public class DetailActivity extends AppCompatActivity {
 
     // Member variable for the Database
     private AppDatabase mDb;
-    private String mTitle;
-    private String mMoviePoster;
-    private String mReleaseDate;
-    private String mVoteAverage;
-    private String mPlotSynopsis;
-    private String mFavourite;
 
     public static final String EXTRA_MOVIE_ID = "extraMovieId";
     public static final String INSTANCE_MOVIE_ID = "instanceMovieId";
