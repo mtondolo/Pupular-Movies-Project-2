@@ -29,6 +29,9 @@ public interface MovieDao {
     @Query("SELECT * FROM movies WHERE id = :id")
     LiveData<MovieEntry> loadMovieById(int id);
 
+    @Query("SELECT * FROM movies WHERE id = :id")
+    MovieEntry loadMovieByIdForFavourite(int id);
+
     @Query("SELECT * FROM movies ORDER BY voteAverage DESC")
-    List<MovieEntry> sortMoviesByTopRated();
+    LiveData<List<MovieEntry>> sortMoviesByTopRated();
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity
     // Member variable for the Database
     private AppDatabase mDb;
     private static List<MovieEntry> movies;
+    private GridLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +72,7 @@ public class MainActivity extends AppCompatActivity
 
         constraintLayout = findViewById(R.id.constraintlayout);
 
-        GridLayoutManager layoutManager
-                = new GridLayoutManager(this, 2);
+        layoutManager = new GridLayoutManager(this, 2);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
@@ -134,9 +135,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void getMoviesData() {
+        final String favourite = "Not Favourite";
         mLoadingIndicator.setVisibility(View.VISIBLE);
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
-        JsonObjectRequest jsonObjectRequest
+        final RequestQueue requestQueue = Volley.newRequestQueue(this);
+        final JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET, NetworkUtils.buildUrl().toString(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity
                                 String release = jsonObject.getString("release_date");
                                 String voteAverage = jsonObject.getString("vote_average");
                                 String plotSynopsis = jsonObject.getString("overview");
-                                String favourite = jsonObject.optString("");
 
                                 final MovieEntry movieEntry = new MovieEntry(id, title, moviePoster,
                                         release, voteAverage, plotSynopsis, favourite);
@@ -184,8 +185,20 @@ public class MainActivity extends AppCompatActivity
         requestQueue.add(jsonObjectRequest);
     }
 
-    public static void sortMoviesByTopRated() {
+  /*  public static void sortMoviesByTopRated() {
         Collections.sort(movies, Collections.<MovieEntry>reverseOrder());
     }
+*/
+
+    public void sortMoviesByTopRated() {
+        final LiveData<List<MovieEntry>> movies = mDb.movieDao().sortMoviesByTopRated();
+        movies.observe(this, new Observer<List<MovieEntry>>() {
+            @Override
+            public void onChanged(List<MovieEntry> movieEntries) {
+                mMoviesAdapter.setMovies(movieEntries);
+            }
+        });
+    }
+
 }
 

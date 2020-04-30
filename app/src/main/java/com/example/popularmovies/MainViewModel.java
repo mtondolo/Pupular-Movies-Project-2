@@ -22,6 +22,7 @@ public class MainViewModel extends AndroidViewModel {
         AppDatabase database = AppDatabase.getInstance(this.getApplication());
         Log.d(TAG, "Actively retrieving the movies from the Database");
         movies = database.movieDao().loadAllMovies();
+
     }
 
     public LiveData<List<MovieEntry>> getMovies() {

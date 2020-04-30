@@ -1,7 +1,6 @@
 package com.example.popularmovies;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -26,7 +25,6 @@ import com.bumptech.glide.Glide;
 import com.example.popularmovies.Utils.AppExecutors;
 import com.example.popularmovies.Utils.NetworkUtils;
 import com.example.popularmovies.model.AppDatabase;
-import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.model.MovieEntry;
 import com.example.popularmovies.model.Review;
 import com.example.popularmovies.model.Trailer;
@@ -36,7 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -82,6 +79,7 @@ public class DetailActivity extends AppCompatActivity {
     private static final int DEFAULT_MOVIE_ID = -1;
     private int mMovieId = DEFAULT_MOVIE_ID;
     private MovieEntry movie;
+    private MovieEntry movie1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +101,6 @@ public class DetailActivity extends AppCompatActivity {
 
         DetailViewModelFactory factory = new DetailViewModelFactory(mDb, mMovieId);
 
-        final LiveData<MovieEntry> movie = mDb.movieDao().loadMovieById(mMovieId);
         final DetailViewModel viewModel
                 = ViewModelProviders.of(this, factory).get(DetailViewModel.class);
         viewModel.getMovie().observe(this, new Observer<MovieEntry>() {
@@ -145,44 +142,30 @@ public class DetailActivity extends AppCompatActivity {
         });
     }
 
-    private void removeAsFavourite() {
-        final MovieEntry movieEntry = new MovieEntry(mTitle, mMoviePoster, mReleaseDate,
-                mVoteAverage, mPlotSynopsis, mFavourite);
+    private void markMovieAsFavourite() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                final MovieEntry movieEntry = mDb.movieDao().loadMovieByIdForFavourite(mMovieId);
                 if (mMovieId != DEFAULT_MOVIE_ID) {
-                    //update movie
-                    movieEntry.setFavourite(null);
+                    //update book
+                    movieEntry.setFavourite("Favourite");
                     mDb.movieDao().updateMovie(movieEntry);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showFavouriteMovieButton();
-                        }
-                    });
                 }
                 finish();
             }
         });
     }
 
-    private void markMovieAsFavourite() {
-        final MovieEntry movieEntry = new MovieEntry(mTitle, mMoviePoster, mReleaseDate,
-                mVoteAverage, mPlotSynopsis, mFavourite);
+    private void removeAsFavourite() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
+                final MovieEntry movieEntry = mDb.movieDao().loadMovieByIdForFavourite(mMovieId);
                 if (mMovieId != DEFAULT_MOVIE_ID) {
-                    //update book
-                    movieEntry.setFavourite("Favourite");
+                    //update movie
+                    movieEntry.setFavourite("Not Favourite");
                     mDb.movieDao().updateMovie(movieEntry);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            showRemoveAsFavouriteMovieButton();
-                        }
-                    });
                 }
                 finish();
             }
@@ -190,30 +173,38 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(MovieEntry movie) {
-
-        if (movie == null) {
+        movie1 = movie;
+        if (movie1 == null) {
             return;
         }
-
         setTitle(movie.getTitle());
         Glide.with(getApplicationContext())
                 .load(String.valueOf(NetworkUtils.buildPosterUrl(movie.getMoviePoster())))
                 .centerCrop()
                 .placeholder(R.color.colorPrimary)
                 .into(mPosterImageView);
-        String rating = movie.getVoteAverage();
+        String rating = movie1.getVoteAverage();
         mRatingsTextView.setText(rating);
-        String releaseDate = movie.getReleaseDate();
+        String releaseDate = movie1.getReleaseDate();
         mReleaseTextView.setText(releaseDate);
-        String plotSynopsis = movie.getPlotSynopsis();
+        String plotSynopsis = movie1.getPlotSynopsis();
         mPlotSynopsisTextView.setText(plotSynopsis);
+
+        if (movie1.getFavourite().equalsIgnoreCase("Favourite")) {
+            showRemoveAsFavouriteMovieButton();
+        } else {
+            showFavouriteMovieButton();
+        }
     }
 
     public void getTrailer() {
+        if (movie1 == null) {
+            return;
+        }
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildTrailerUrl(movie.getId()).toString(), null,
+                NetworkUtils.buildTrailerUrl(movie1.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -240,10 +231,13 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void getReviews() {
+        if (movie1 == null) {
+            return;
+        }
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         JsonObjectRequest jsonObjectRequest
                 = new JsonObjectRequest(Request.Method.GET,
-                NetworkUtils.buildReviewUrl(movie.getId()).toString(), null,
+                NetworkUtils.buildReviewUrl(movie1.getId()).toString(), null,
                 new Response.Listener<JSONObject>() {
 
                     @Override

@@ -44,22 +44,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         return new MoviesAdapterViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
         MovieEntry movieEntry = mMovieEntries.get(position);
-
         Glide.with(holder.itemView.getContext())
                 .load(String.valueOf(NetworkUtils.buildPosterUrl(movieEntry.getMoviePoster())))
                 .placeholder(R.color.colorPrimary)
                 .centerCrop()
                 .into(holder.mMoviesImageView);
 
-        if (movieEntry.getFavourite().isEmpty()) {
-            holder.mFavouriteImageView.setVisibility(View.INVISIBLE);
+       if (movieEntry.getFavourite().equalsIgnoreCase("Favourite")) {
+            holder.mFavouriteImageView.setVisibility(View.VISIBLE);;
         } else {
-            holder.mFavouriteImageView.setVisibility(View.VISIBLE);
+            holder.mFavouriteImageView.setVisibility(View.INVISIBLE);
         }
     }
+
 
     @Override
     public int getItemCount() {
