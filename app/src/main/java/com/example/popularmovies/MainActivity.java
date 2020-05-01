@@ -35,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -181,11 +180,6 @@ public class MainActivity extends AppCompatActivity
         });
         requestQueue.add(jsonObjectRequest);
     }
-
-  /*  public static void sortMoviesByTopRated() {
-        Collections.sort(movies, Collections.<MovieEntry>reverseOrder());
-    }
-*/
 
     public void sortMoviesByTopRated() {
         final LiveData<List<MovieEntry>> movies = mDb.movieDao().sortMoviesByTopRated();
